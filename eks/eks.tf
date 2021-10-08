@@ -1,5 +1,9 @@
+locals {
+  cluster_name = "lab"
+}
+
 resource "aws_eks_cluster" "lab_cluster" {
-  name     = "lab"
+  name     = local.cluster_name
   role_arn = aws_iam_role.lab_cluster_role.arn
 
   vpc_config {
@@ -11,11 +15,12 @@ resource "aws_eks_cluster" "lab_cluster" {
   depends_on = [
     aws_iam_role_policy_attachment.lab_AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.lab_AmazonEKSVPCResourceController,
+    aws_cloudwatch_log_group.lab_cluster_log_group
   ]
 }
 
 resource "aws_iam_role" "lab_cluster_role" {
-  name = "eks-cluster-lab"
+  name = "eks-cluster-${local.cluster_name}"
 
   assume_role_policy = <<POLICY
 {
@@ -43,4 +48,13 @@ resource "aws_iam_role_policy_attachment" "lab_AmazonEKSClusterPolicy" {
 resource "aws_iam_role_policy_attachment" "lab_AmazonEKSVPCResourceController" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
   role       = aws_iam_role.lab_cluster_role.name
+}
+
+
+resource "aws_cloudwatch_log_group" "lab_cluster_log_group" {
+  # The log group name format is /aws/eks/<cluster-name>/cluster
+  # Reference: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html
+  name              = "/aws/eks/${local.cluster_name}/cluster"
+  retention_in_days = 7
+
 }

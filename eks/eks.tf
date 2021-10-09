@@ -10,6 +10,11 @@ resource "aws_eks_cluster" "lab_cluster" {
     subnet_ids = data.terraform_remote_state.vpc.outputs.private_subnets
   }
 
+  tags = {
+    "environment" = var.environment
+    "Terraform" = "true"
+  }
+
   # Ensure that IAM Role permissions are created before and deleted after EKS Cluster handling.
   # Otherwise, EKS will not be able to properly delete EKS managed EC2 infrastructure such as Security Groups.
   depends_on = [

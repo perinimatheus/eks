@@ -8,11 +8,11 @@ resource "aws_eks_node_group" "lab_shared_node_group" {
   node_group_name = local.node_group_name
   node_role_arn   = aws_iam_role.lab_shared_node_group_role.arn
   subnet_ids      = data.terraform_remote_state.vpc.outputs.private_subnets
-  instance_types = local.instance_types
+  instance_types  = local.instance_types
 
   scaling_config {
     desired_size = 1
-    max_size     = 1
+    max_size     = 3
     min_size     = 1
   }
 
@@ -22,6 +22,14 @@ resource "aws_eks_node_group" "lab_shared_node_group" {
 
   update_config {
     max_unavailable = 1
+  }
+
+  tags = {
+    "Terraform"                                                                         = "true"
+    "Node_group"                                                                        = "shared"
+    "environment"                                                                       = "lab"
+    "k8s.io/cluster-autoscaler/${data.terraform_remote_state.eks.outputs.cluster_name}" = "owned"
+    "k8s.io/cluster-autoscaler/enabled"                                                 = true
   }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.

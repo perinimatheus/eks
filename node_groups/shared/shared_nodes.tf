@@ -1,6 +1,11 @@
 locals {
-  node_group_name = "lab-shared"
-  instance_types  = ["t3.medium"]
+  node_group_name = "${var.cluster_name}-shared"
+}
+
+module "launh_template" {
+  source = "../../launch_template"
+
+  
 }
 
 resource "aws_eks_node_group" "lab_shared_node_group" {
@@ -8,12 +13,17 @@ resource "aws_eks_node_group" "lab_shared_node_group" {
   node_group_name = local.node_group_name
   node_role_arn   = aws_iam_role.lab_shared_node_group_role.arn
   subnet_ids      = data.terraform_remote_state.vpc.outputs.private_subnets
-  instance_types  = local.instance_types
+  instance_types  = var.instance_types
+  capacity_type   = "SPOT"
+
+  labels = {
+    product = "shared"
+  }
 
   scaling_config {
-    desired_size = 1
-    max_size     = 3
-    min_size     = 1
+    desired_size = var.desired_size
+    max_size     = var.max_size
+    min_size     = var.min_size
   }
 
   lifecycle {
@@ -69,4 +79,22 @@ resource "aws_iam_role_policy_attachment" "lab_shared_node_group_AmazonEKS_CNI_P
 resource "aws_iam_role_policy_attachment" "lab_shared_node_group_AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.lab_shared_node_group_role.name
+}
+
+resource "aws_security_group" "lab_shared_cluster_nodes_sg" {
+    name = "${local.node_group_name}-nodes-sg"
+    vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
+
+    egress {
+        from_port   = 0
+        to_port     = 0
+
+        protocol = "-1"
+        cidr_blocks = [ "0.0.0.0/0" ]
+    }
+
+    tags = {
+        Name = "${local.node_group_name}-nodes-sg"
+    }
+
 }

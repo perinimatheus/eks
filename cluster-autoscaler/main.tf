@@ -17,7 +17,7 @@ terraform {
     region = "us-east-1"
   }
 
-  required_version = ">= 0.14.9"
+  required_version = ">= 0.14.11"
 }
 
 provider "helm" {
@@ -28,4 +28,13 @@ provider "helm" {
 
 provider "aws" {
   region = "us-east-1"
+}
+
+data "terraform_remote_state" "eks" {
+  backend = "s3"
+  config = {
+    bucket = "tfstate-perini"
+    key    = "lab-eks"
+    region = "us-east-1"
+  }
 }

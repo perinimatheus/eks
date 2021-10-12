@@ -9,8 +9,8 @@ module "vpc" {
   cidr = "10.0.0.0/16"
 
   azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
-  private_subnets = ["11.0.0.0/20", "11.0.16.0/20", "11.0.32.0/20"]
-  public_subnets  = ["11.0.112.0/20", "11.0.128.0/20", "11.0.144.0/20"]
+  private_subnets = ["10.0.0.0/20", "10.0.16.0/20", "10.0.32.0/20"]
+  public_subnets  = ["10.0.112.0/20", "10.0.128.0/20", "10.0.144.0/20"]
 
   enable_nat_gateway = true
   enable_vpn_gateway = false
@@ -24,7 +24,7 @@ module "vpc" {
   }
 
   tags = {
-    Terraform = "true"
+    Terraform   = "true"
     Environment = "lab"
   }
 }

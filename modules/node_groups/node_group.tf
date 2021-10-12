@@ -1,24 +1,39 @@
 locals {
-  node_group_name = "${var.cluster_name}-shared"
+  node_group_name = "${var.cluster_name}-${var.ng_name}"
 }
 
-module "launh_template" {
-  source = "../../launch_template"
+module "launch_template" {
+  source = "../launch_template"
 
-  
+  worker_group_name           = local.node_group_name
+  security_groups             = [ 
+    "${join(",", [for s in var.security_groups : "${s}"])}",
+    "${aws_security_group.lab_shared_cluster_nodes_sg.id}"
+    ]
+  associate_public_ip_address = var.associate_public_ip_address
+  k8s_labels                  = var.k8s_labels
+  capacity_type               = var.capacity_type
+  cluster_name                = var.cluster_name
+  eks_cluster_endpoint        = var.eks_cluster_endpoint
+  cluster_ca                  = var.cluster_ca
+  image_id                    = var.image_id
+
 }
 
 resource "aws_eks_node_group" "lab_shared_node_group" {
-  cluster_name    = data.terraform_remote_state.eks.outputs.cluster_name
+  cluster_name    = var.cluster_name
   node_group_name = local.node_group_name
   node_role_arn   = aws_iam_role.lab_shared_node_group_role.arn
   subnet_ids      = data.terraform_remote_state.vpc.outputs.private_subnets
   instance_types  = var.instance_types
-  capacity_type   = "SPOT"
+  capacity_type   = var.capacity_type
 
-  labels = {
-    product = "shared"
+  launch_template {
+    id      = module.launch_template.launch_template_id
+    version = module.launch_template.launch_template_latest_version
   }
+
+  labels = var.k8s_labels
 
   scaling_config {
     desired_size = var.desired_size
@@ -48,6 +63,7 @@ resource "aws_eks_node_group" "lab_shared_node_group" {
     aws_iam_role_policy_attachment.lab_shared_node_group_nodeAmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.lab_shared_node_group_AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.lab_shared_node_group_AmazonEC2ContainerRegistryReadOnly,
+    module.launch_template
   ]
 }
 
@@ -82,19 +98,37 @@ resource "aws_iam_role_policy_attachment" "lab_shared_node_group_AmazonEC2Contai
 }
 
 resource "aws_security_group" "lab_shared_cluster_nodes_sg" {
-    name = "${local.node_group_name}-nodes-sg"
-    vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
+  name   = "${local.node_group_name}-nodes-sg"
+  vpc_id = var.vpc_id
 
-    egress {
-        from_port   = 0
-        to_port     = 0
+  egress {
+    from_port = 0
+    to_port   = 0
 
-        protocol = "-1"
-        cidr_blocks = [ "0.0.0.0/0" ]
-    }
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-    tags = {
-        Name = "${local.node_group_name}-nodes-sg"
-    }
+  tags = {
+    Name = "${local.node_group_name}-nodes-sg"
+  }
 
+}
+
+resource "kubernetes_config_map" "aws-auth" {
+  metadata {
+    name      = "aws-auth"
+    namespace = "kube-system"
+  }
+
+  data = {
+    mapRoles = <<YAML
+- rolearn: ${aws_iam_role.lab_shared_node_group_role.arn}
+  username: system:node:{{EC2PrivateDNSName}}  
+  groups:
+    - system:bootstrappers
+    - system:nodes
+    - system:nodes-proxier
+YAML
+  }
 }

@@ -1,14 +1,14 @@
 terraform {
-  required_providers{
-      aws = {
-        source  = "hashicorp/aws"
-        version = "~> 3.27"
-      }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.27"
+    }
   }
 
   backend "s3" {
     bucket = "tfstate-perini"
-    key    = "lab-launch-template"
+    key    = "lab-vpc"
     region = "us-east-1"
   }
 

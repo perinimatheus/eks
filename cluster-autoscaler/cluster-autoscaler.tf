@@ -1,6 +1,6 @@
 resource "helm_release" "cluster-autoscaler" {
   name       = "cluster-autoscaler"
-  chart      = "./helm/cluster-autoscaler"
+  chart      = "../helm/cluster-autoscaler"
   namespace  = "kube-system"
 
   values = [
@@ -10,6 +10,11 @@ resource "helm_release" "cluster-autoscaler" {
   set {
       name    = "release"
       value   = "cluster-autoscaler"
+  }
+
+  set {
+    name = "autoDiscovery.clusterName"
+    value = data.terraform_remote_state.eks.outputs.cluster_name
   }
 
   set {
@@ -29,7 +34,8 @@ data "aws_iam_policy_document" "cluster_autoscaler_assume_role_policy" {
       variable = "${replace(data.terraform_remote_state.eks.outputs.oidc_url, "https://", "")}:sub"
       values   = [
           "system:serviceaccount:kube-system:cluster-autoscaler",
-          "system:serviceaccount:kube-system:aws-cluster-autoscaler"
+          "system:serviceaccount:kube-system:aws-cluster-autoscaler",
+          "system:serviceaccount:kube-system:cluster-autoscaler-aws-cluster-autoscaler"
         ]
     }
 
@@ -42,7 +48,7 @@ data "aws_iam_policy_document" "cluster_autoscaler_assume_role_policy" {
 
 resource "aws_iam_role" "cluster_autoscaler_role" {
   assume_role_policy = data.aws_iam_policy_document.cluster_autoscaler_assume_role_policy.json
-  name               = "cluster_autoscaler_role"
+  name               = "${data.terraform_remote_state.eks.outputs.cluster_name}-cluster_autoscaler_role"
 }
 
 data "aws_iam_policy_document" "cluster_autoscaler_policy" {
@@ -87,15 +93,15 @@ data "aws_iam_policy_document" "cluster_autoscaler_policy" {
 }
 
 resource "aws_iam_policy" "cluster_autoscaler_policy" {
-    name        = "${local.cluster_name}-cluster-autoscaler"
+    name        = "${data.terraform_remote_state.eks.outputs.cluster_name}-cluster-autoscaler"
     path        = "/"
-    description = local.cluster_name
+    description = "${data.terraform_remote_state.eks.outputs.cluster_name} cluster autoscaler"
 
     policy = data.aws_iam_policy_document.cluster_autoscaler_policy.json
 }
 
 resource "aws_iam_policy_attachment" "cluster_autoscaler" {
-    name       = "cluster_autoscaler"
+    name       = "${data.terraform_remote_state.eks.outputs.cluster_name}-cluster_autoscaler"
     roles      = [ 
       aws_iam_role.cluster_autoscaler_role.name
     ]

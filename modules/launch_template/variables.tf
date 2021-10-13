@@ -1,8 +1,38 @@
+#############################
+# VARIAVEIS OBRIGATORIAS
+#############################
+
 
 variable "worker_group_name" {
   type    = string
-  default = "lab-node-group"
 }
+
+variable "k8s_labels" {
+  type = map
+}
+
+variable "cluster_name" {
+  type = string
+}
+
+variable "eks_cluster_endpoint" {
+  type = string
+}
+
+variable "cluster_ca" {
+  type = string
+}
+
+variable "capacity_type" {
+  type = string
+}
+
+
+###############################
+# VARIAVEIS NÃO OBRIGATORIAS
+###############################
+
+
 variable "volume_type" {
   type    = string
   default = "gp2"
@@ -25,6 +55,7 @@ variable "monitoring" {
 
 variable "image_id" {
   type = string
+  default = ""
 }
 
 variable "cpu_credits" {
@@ -40,10 +71,6 @@ variable "associate_public_ip_address" {
 variable "ebs_optimized" {
   type    = bool
   default = false
-}
-
-variable "k8s_labels" {
-  type = map
 }
 
 #variable "instance_type" {
@@ -64,20 +91,4 @@ variable "kubelet_extra_args" {
 variable "pre_userdata" {
   type    = string
   default = ""
-}
-
-variable "cluster_name" {
-  type = string
-}
-
-variable "eks_cluster_endpoint" {
-  type = string
-}
-
-variable "cluster_ca" {
-  type = string
-}
-
-variable "capacity_type" {
-  type = string
 }

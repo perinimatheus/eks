@@ -1,8 +1,3 @@
-locals {
-
-}
-
-
 data "cloudinit_config" "workers_userdata" {
   gzip          = false
   base64_encode = true

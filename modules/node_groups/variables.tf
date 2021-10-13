@@ -9,11 +9,6 @@ variable "ng_name" {
   type = string
 }
 
-variable "k8s_labels" {
-  type = map
-  default = {}
-}
-
 variable "vpc_id" {
   type = string
 }
@@ -78,4 +73,9 @@ variable "image_id" {
 variable "security_groups" {
   type = list
   default = []
+}
+
+variable "k8s_labels" {
+  type = map
+  default = {}
 }

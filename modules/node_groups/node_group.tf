@@ -8,7 +8,7 @@ module "launch_template" {
   worker_group_name           = local.node_group_name
   security_groups             = [ 
     "${join(",", [for s in var.security_groups : "${s}"])}",
-    "${aws_security_group.lab_shared_cluster_nodes_sg.id}"
+    "${aws_security_group.eks_shared_cluster_nodes_sg.id}"
     ]
   associate_public_ip_address = var.associate_public_ip_address
   k8s_labels                  = var.k8s_labels
@@ -20,11 +20,11 @@ module "launch_template" {
 
 }
 
-resource "aws_eks_node_group" "lab_shared_node_group" {
+resource "aws_eks_node_group" "eks_shared_node_group" {
   cluster_name    = var.cluster_name
   node_group_name = local.node_group_name
-  node_role_arn   = aws_iam_role.lab_shared_node_group_role.arn
-  subnet_ids      = data.terraform_remote_state.vpc.outputs.private_subnets
+  node_role_arn   = aws_iam_role.eks_shared_node_group_role.arn
+  subnet_ids      = var.subnet_ids
   instance_types  = var.instance_types
   capacity_type   = var.capacity_type
 
@@ -53,21 +53,21 @@ resource "aws_eks_node_group" "lab_shared_node_group" {
     "Terraform"                                                                         = "true"
     "Node_group"                                                                        = "shared"
     "environment"                                                                       = "lab"
-    "k8s.io/cluster-autoscaler/${data.terraform_remote_state.eks.outputs.cluster_name}" = "owned"
+    "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
     "k8s.io/cluster-autoscaler/enabled"                                                 = true
   }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
   depends_on = [
-    aws_iam_role_policy_attachment.lab_shared_node_group_nodeAmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.lab_shared_node_group_AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.lab_shared_node_group_AmazonEC2ContainerRegistryReadOnly,
+    aws_iam_role_policy_attachment.eks_shared_node_group_nodeAmazonEKSWorkerNodePolicy,
+    aws_iam_role_policy_attachment.eks_shared_node_group_AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.eks_shared_node_group_AmazonEC2ContainerRegistryReadOnly,
     module.launch_template
   ]
 }
 
-resource "aws_iam_role" "lab_shared_node_group_role" {
+resource "aws_iam_role" "eks_shared_node_group_role" {
   name = "eks-node-group-${local.node_group_name}"
 
   assume_role_policy = jsonencode({
@@ -82,22 +82,22 @@ resource "aws_iam_role" "lab_shared_node_group_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "lab_shared_node_group_nodeAmazonEKSWorkerNodePolicy" {
+resource "aws_iam_role_policy_attachment" "eks_shared_node_group_nodeAmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = aws_iam_role.lab_shared_node_group_role.name
+  role       = aws_iam_role.eks_shared_node_group_role.name
 }
 
-resource "aws_iam_role_policy_attachment" "lab_shared_node_group_AmazonEKS_CNI_Policy" {
+resource "aws_iam_role_policy_attachment" "eks_shared_node_group_AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.lab_shared_node_group_role.name
+  role       = aws_iam_role.eks_shared_node_group_role.name
 }
 
-resource "aws_iam_role_policy_attachment" "lab_shared_node_group_AmazonEC2ContainerRegistryReadOnly" {
+resource "aws_iam_role_policy_attachment" "eks_shared_node_group_AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role       = aws_iam_role.lab_shared_node_group_role.name
+  role       = aws_iam_role.eks_shared_node_group_role.name
 }
 
-resource "aws_security_group" "lab_shared_cluster_nodes_sg" {
+resource "aws_security_group" "eks_shared_cluster_nodes_sg" {
   name   = "${local.node_group_name}-nodes-sg"
   vpc_id = var.vpc_id
 
@@ -115,6 +115,16 @@ resource "aws_security_group" "lab_shared_cluster_nodes_sg" {
 
 }
 
+resource "aws_security_group_rule" "nodes_ingress_https" {
+    from_port   = 10250
+    to_port     = 10250
+    protocol    = "tcp"
+
+    source_security_group_id = var.eks_cluster_sg_id
+    security_group_id = aws_security_group.eks_shared_cluster_nodes_sg.id
+    type = "ingress"
+}
+
 resource "kubernetes_config_map" "aws-auth" {
   metadata {
     name      = "aws-auth"
@@ -123,7 +133,7 @@ resource "kubernetes_config_map" "aws-auth" {
 
   data = {
     mapRoles = <<YAML
-- rolearn: ${aws_iam_role.lab_shared_node_group_role.arn}
+- rolearn: ${aws_iam_role.eks_shared_node_group_role.arn}
   username: system:node:{{EC2PrivateDNSName}}  
   groups:
     - system:bootstrappers

@@ -6,12 +6,6 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket = "tfstate-perini"
-    key    = "lab-launch-template"
-    region = "us-east-1"
-  }
-
   required_version = ">= 0.14.9"
 }
 

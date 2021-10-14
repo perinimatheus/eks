@@ -16,8 +16,8 @@ resource "aws_eks_cluster" "eks_cluster" {
   enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   tags = {
-    "Terraform" = "true"
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "Terraform" = "true",
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared",
     "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned",
     "k8s.io/cluster-autoscaler/enabled" = true 
   }
@@ -138,7 +138,8 @@ resource "aws_security_group" "nodes_cluster_sg" {
     }
 
     tags = {
-        Name = "${var.cluster_name}-nodes-sg"
+        Name = "${var.cluster_name}-nodes-sg",
+        "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
     }
 
 }

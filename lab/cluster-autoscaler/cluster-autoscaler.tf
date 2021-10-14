@@ -1,6 +1,6 @@
 resource "helm_release" "cluster-autoscaler" {
   name       = "cluster-autoscaler"
-  chart      = "../helm/cluster-autoscaler"
+  chart      = "../../helm/cluster-autoscaler"
   namespace  = "kube-system"
 
   values = [

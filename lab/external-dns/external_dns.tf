@@ -1,7 +1,11 @@
+locals {
+  hostedzone = ""
+}
+
 resource "helm_release" "external_dns" {
   name       = "external-dns"
   chart      = "../../helm/external-dns"
-  namespace  = "kube-system"
+  namespace  = "default"
   timeout    = 390
 
   values = [
@@ -11,6 +15,11 @@ resource "helm_release" "external_dns" {
   set {
     name = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = aws_iam_role.external_dns_role.arn
+  }
+
+  set {
+    name = "txtOwnerId"
+    value = local.hostedzone
   }
 }
 
@@ -50,7 +59,7 @@ data "aws_iam_policy_document" "external_dns_policy" {
         ]
 
         resources = [ 
-          "arn:aws:route53:::hostedzone/Z10192956MZ2SIBAJ8AB"
+            "arn:aws:route53:::hostedzone/${local.hostedzone}"
         ]
 
     }

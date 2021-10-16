@@ -125,6 +125,16 @@ resource "aws_security_group_rule" "nodes_ingress_https" {
     type = "ingress"
 }
 
+resource "aws_security_group_rule" "nodes_ingress_node_port" {
+    from_port   = 30000
+    to_port     = 32768
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+
+    security_group_id = aws_security_group.eks_shared_cluster_nodes_sg.id
+    type = "ingress"
+}
+
 resource "kubernetes_config_map" "aws-auth" {
   metadata {
     name      = "aws-auth"

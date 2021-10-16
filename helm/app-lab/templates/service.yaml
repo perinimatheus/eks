@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app-lab.fullname" . }}
+  labels:
+    {{- include "app-lab.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "app-lab.selectorLabels" . | nindent 4 }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app-lab.fullname" . }}-canary
+  labels:
+    {{- include "app-lab.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    role: {{ include "app-lab.fullname" . }}-canary
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app-lab.fullname" . }}-stable
+  labels:
+    {{- include "app-lab.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    role: {{ include "app-lab.fullname" . }}-stable

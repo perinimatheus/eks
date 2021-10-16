@@ -139,7 +139,7 @@ resource "aws_security_group" "nodes_cluster_sg" {
 
     tags = {
         Name = "${var.cluster_name}-nodes-sg",
-        "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+        "kubernetes.io/cluster/${var.cluster_name}" = "owned"
     }
 
 }

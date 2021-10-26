@@ -39,7 +39,7 @@ resource "aws_subnet" "infra_subnet_1a" {
     availability_zone     = "us-east-1a"
 
     tags = {
-        "Name" = "${local.custer_name}-infra-subnet-1a",
+        "Name" = "${local.cluster_name}-infra-subnet-1a",
         "kubernetes.io/cluster/${local.cluster_name}" = "shared"
     }
 
@@ -55,7 +55,7 @@ resource "aws_subnet" "infra_subnet_1b" {
     availability_zone     = "us-east-1b"
 
     tags = {
-        "Name" = "${local.custer_name}-infra-subnet-1b",
+        "Name" = "${local.cluster_name}-infra-subnet-1b",
         "kubernetes.io/cluster/${local.cluster_name}" = "shared"
     }
 
@@ -71,7 +71,7 @@ resource "aws_subnet" "infra_subnet_1c" {
     availability_zone     = "us-east-1c"
 
     tags = {
-        "Name" = "${local.custer_name}-infra-subnet-1c",
+        "Name" = "${local.cluster_name}-infra-subnet-1c",
         "kubernetes.io/cluster/${local.cluster_name}" = "shared"
     }
 

@@ -1,0 +1,27 @@
+apiVersion: crd.k8s.amazonaws.com/v1alpha1
+kind: ENIConfig
+metadata:
+ name: {{ .Values.az_a.name }}
+spec:
+  securityGroups: {{ .Values.az_a.sgs }}
+  subnet: {{ .Values.az_a.subnet }}
+
+---
+
+apiVersion: crd.k8s.amazonaws.com/v1alpha1
+kind: ENIConfig
+metadata:
+ name: {{ .Values.az_b.name }}
+spec:
+  securityGroups: {{ .Values.az_b.sgs }}
+  subnet: {{ .Values.az_b.subnet }}
+
+---
+
+apiVersion: crd.k8s.amazonaws.com/v1alpha1
+kind: ENIConfig
+metadata:
+ name: {{ .Values.az_c.name }}
+spec:
+  securityGroups: {{ .Values.az_c.sgs }}
+  subnet: {{ .Values.az_c.subnet }}

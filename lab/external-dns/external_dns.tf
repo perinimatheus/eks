@@ -1,5 +1,8 @@
 locals {
   hostedzone = ""
+  domainFilters = [
+    ""
+  ]
 }
 
 resource "helm_release" "external_dns" {
@@ -21,6 +24,11 @@ resource "helm_release" "external_dns" {
     name = "txtOwnerId"
     value = local.hostedzone
   }
+
+  set {
+    name = "domainFilters"
+    value = local.domainFilters
+  }
 }
 
 data "aws_iam_policy_document" "external_dns_assume_role_policy" {
@@ -32,7 +40,7 @@ data "aws_iam_policy_document" "external_dns_assume_role_policy" {
       test     = "StringEquals"
       variable = "${replace(data.terraform_remote_state.eks.outputs.oidc_url, "https://", "")}:sub"
       values   = [
-          "system:serviceaccount:kube-system:external-dns-${data.terraform_remote_state.eks.outputs.cluster_name}"
+          "system:serviceaccount:kube-system:external-dns"
         ]
     }
 

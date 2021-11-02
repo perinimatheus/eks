@@ -63,20 +63,7 @@ ingress:
           backend:
             service:
               name: app-lab
-  #  - host: app-lab-canary.local
-  #    paths:
-  #      - path: /
-  #        pathType: ImplementationSpecific
-  #        backend:
-  #          service:
-  #            name: app-lab-canary
-  #  - host: app-lab-stable.local
-  #    paths:
-  #      - path: /
-  #        pathType: ImplementationSpecific
-  #        backend:
-  #          service:
-  #            name: app-lab-stable
+              
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

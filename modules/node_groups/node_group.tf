@@ -17,6 +17,7 @@ module "launch_template" {
   eks_cluster_endpoint        = var.eks_cluster_endpoint
   cluster_ca                  = var.cluster_ca
   image_id                    = var.image_id
+  kubelet_extra_args          = var.kubelet_extra_args
 
 }
 

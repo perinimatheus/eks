@@ -79,3 +79,8 @@ variable "k8s_labels" {
   type = map
   default = {}
 }
+
+variable "kubelet_extra_args" {
+  type = string
+  default = ""
+}

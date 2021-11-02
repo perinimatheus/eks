@@ -46,7 +46,7 @@
 
 <p>Criação do node group</p>
 
-- Antes de criar o node group, verifique a quantidade de pods recomendados para o tipo de instacia que você deseja, execute o script abaixo substituindo <m5.large> (incluindo <>) pelo tipo de instância que você planeja implantar e <1.9.x- eksbuild.y> ou posterior pela versão complementar do CNI da Amazon VPC
+- Antes de criar o node group, verifique a quantidade de pods recomendados para o tipo de instacia que você deseja, execute o script abaixo substituindo `<m5.large>` (incluindo <>) pelo tipo de instância que você planeja implantar e `<1.9.x- eksbuild.y>` ou posterior pela versão complementar do CNI da Amazon VPC
 
   - Para verificar a versão do CNI execute o seguinte comando:
 

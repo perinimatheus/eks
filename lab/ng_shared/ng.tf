@@ -9,7 +9,7 @@ module "node_group" {
   cluster_ca           = data.terraform_remote_state.eks.outputs.kubeconfig-certificate-authority-data
   eks_cluster_endpoint = data.terraform_remote_state.eks.outputs.endpoint
   capacity_type        = "SPOT"
-  security_groups      = [data.terraform_remote_state.eks.outputs.nodes_sg_id, aws_security_group.eks_shared_cluster_nodes_sg]
+  security_groups      = [data.terraform_remote_state.eks.outputs.nodes_sg_id, aws_security_group.eks_shared_cluster_nodes_sg.id]
   instance_types       = ["t3.medium"]
 
   k8s_labels = tomap({

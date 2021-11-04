@@ -1,8 +1,10 @@
+# **<u>---------------- Em Construção ---------------</u>**
+
 # **<u>Documentação</u>**
 
 ## **<u>VPC</u>**
 
-<p>Criação de uma vpc com 1 cidr secundario, 3 public subnets, 3 private subnets e 3 pods subnets utilizando o cidr secundario (cluster irá usar essas subnets para alocar os pods)</p>
+<p>Criação de uma vpc, 3 public subnets, 3 private subnets e, caso necessite, descomente a parte de criação do cidr secundario e das 3 pods subnets (cluster irá usar essas subnets para alocar os pods)</p>
 
  > terraform -chdir=lab/vpc/ apply
 
@@ -15,6 +17,8 @@
 ## **<u>ENICONFIG</u>**
 
 <p>Configuração do eni para a utilização do cidr secundario e alocação de ips</p>
+
+**`OBS: Caso não use cidr secundario, skip esse step e vá para a configuração dos node groups!!!!`**
 
 1. ### **CONFIGURE ENI**
 
@@ -36,7 +40,7 @@
 
   - ### Para iniciar com 10 ips disponibilizados
 
-  -  > kubectl set env daemonset aws-node -n kube-system MINIMUM_IP_TARGET=10
+    -  > kubectl set env daemonset aws-node -n kube-system MINIMUM_IP_TARGET=10
 
 2. ### **REALIZE O APPLY**
 

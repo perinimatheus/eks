@@ -24,7 +24,7 @@ resource "helm_release" "eniconfig" {
 
   set {
     name = "az_a.subnet"
-    value = data.terraform_remote_state.vpc.outputs.infra_subnets[0]
+    value = data.terraform_remote_state.vpc.outputs.pods_subnets[0]
   }
 
   set {
@@ -39,7 +39,7 @@ resource "helm_release" "eniconfig" {
 
   set {
     name = "az_b.subnet"
-    value = data.terraform_remote_state.vpc.outputs.infra_subnets[1]
+    value = data.terraform_remote_state.vpc.outputs.pods_subnets[1]
   }
 
   set {
@@ -54,6 +54,6 @@ resource "helm_release" "eniconfig" {
 
   set {
     name = "az_c.subnet"
-    value = data.terraform_remote_state.vpc.outputs.infra_subnets[2]
+    value = data.terraform_remote_state.vpc.outputs.pods_subnets[2]
   }
 }

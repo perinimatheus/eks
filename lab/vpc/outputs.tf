@@ -11,10 +11,6 @@ output "vpc_id" {
 }
 
 
-###############################################################
-# IF YOU WANT TO USE SECONDARY CIDR UNCOMMENT THE BELLOW OUTPUT
-###############################################################
-
-#output "pods_subnets" {
-#  value = [aws_subnet.pods_subnet_1a.id, aws_subnet.pods_subnet_1b.id, aws_subnet.pods_subnet_1c.id]
-#}
+output "pods_subnets" {
+  value = module.vpc.pods_subnets
+}

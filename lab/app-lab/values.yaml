@@ -55,6 +55,7 @@ ingress:
   annotations:
     #kubernetes.io/ingress.class: nginx
     #kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
   hosts:
     - host: app-lab.perini-lab.net
       paths:

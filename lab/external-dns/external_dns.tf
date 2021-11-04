@@ -1,8 +1,6 @@
 locals {
-  hostedzone = ""
-  domainFilters = [
-    ""
-  ]
+  hostedzone = "Z10192956MZ2SIBAJ8AB"
+  domainFilters = ["perini-lab.net"]
 }
 
 resource "helm_release" "external_dns" {
@@ -27,7 +25,7 @@ resource "helm_release" "external_dns" {
 
   set {
     name = "domainFilters"
-    value = local.domainFilters
+    value = "{${join(",", local.domainFilters)}}"
   }
 }
 
@@ -40,7 +38,7 @@ data "aws_iam_policy_document" "external_dns_assume_role_policy" {
       test     = "StringEquals"
       variable = "${replace(data.terraform_remote_state.eks.outputs.oidc_url, "https://", "")}:sub"
       values   = [
-          "system:serviceaccount:kube-system:external-dns"
+          "system:serviceaccount:default:external-dns"
         ]
     }
 

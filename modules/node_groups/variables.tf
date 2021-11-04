@@ -5,6 +5,10 @@ variable "cluster_name" {
   type = string
 }
 
+variable "k8s_labels" {
+  type = map
+}
+
 variable "ng_name" {
   type = string
 }
@@ -55,11 +59,6 @@ variable "instance_types" {
   type = list
 }
 
-variable "associate_public_ip_address" {
-  type    = bool
-  default = false
-}
-
 variable "capacity_type" {
   type    = string
   default = "ON_DEMAND"
@@ -75,12 +74,52 @@ variable "security_groups" {
   default = []
 }
 
-variable "k8s_labels" {
-  type = map
-  default = {}
-}
-
 variable "kubelet_extra_args" {
   type = string
   default = ""
+}
+
+variable "pre_userdata" {
+  type    = string
+  default = ""
+}
+
+variable "update_default_version" {
+  type    = bool
+  default = true
+}
+
+variable "ebs_optimized" {
+  type    = bool
+  default = false
+}
+
+variable "cpu_credits" {
+  type    = string
+  default = "standard"
+}
+
+variable "associate_public_ip_address" {
+  type    = bool
+  default = false
+}
+
+variable "monitoring" {
+  type    = bool
+  default = true
+}
+
+variable "volume_size" {
+  type    = number
+  default = 20
+}
+
+variable "volume_type" {
+  type    = string
+  default = "gp2"
+}
+
+variable "volume_device_name" {
+  type  = string
+  default  = "/dev/xvda"
 }

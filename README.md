@@ -4,13 +4,17 @@
 
 ## **<u>VPC</u>**
 
-<p>Criação de uma vpc, 3 public subnets, 3 private subnets e, caso necessite, descomente a parte de criação do cidr secundario e das 3 pods subnets (cluster irá usar essas subnets para alocar os pods)</p>
+<p>Criação de uma vpc, 3 public subnets, 3 private subnets e, caso necessite, coloque o valor da variavel enable_secondary_cidr como true para a criação do cidr secundario e das 3 pods subnets (cluster irá usar essas subnets para alocar os pods)</p>
 
  > terraform -chdir=lab/vpc/ apply
 
 ## **<u>EKS</u>**
 
 <p>Criação do cluster eks</p>
+
+- Para utilizar o cidr secundario, altere a variavel subnet_ids para o valor abaixo:
+
+  - > subnet_ids = data.terraform_remote_state.vpc.outputs.pods_subnets
 
  > terraform -chdir=lab/eks/ apply
 
@@ -50,15 +54,17 @@
 
 <p>Criação do node group</p>
 
-- Antes de criar o node group, verifique a quantidade de pods recomendados para o tipo de instacia que você deseja, execute o script abaixo substituindo `<m5.large>` (incluindo <>) pelo tipo de instância que você planeja implantar e `<1.9.x- eksbuild.y>` ou posterior pela versão complementar do CNI da Amazon VPC
+- Caso queira limitar o numero de pods por instancia, siga os passos abaixo:
 
-  - Para verificar a versão do CNI execute o seguinte comando:
+  - Verifique a quantidade de pods recomendados para o tipo de instacia que você deseja, execute o script abaixo substituindo `<m5.large>` (incluindo <>) pelo tipo de   instância que você planeja implantar e `<1.9.x- eksbuild.y>` ou posterior pela versão complementar do CNI da Amazon VPC
 
-    - > kubectl describe daemonset aws-node --namespace kube-system | grep Image | cut -d "/" -f 2
+    - Para verificar a versão do CNI execute o seguinte comando:
 
-  - > ./max-pods-calculator.sh --instance-type `<m5.large>` --cni-version `<1.9.x-eksbuild.y>` --cni-custom-networking-enabled
+      - > kubectl describe daemonset aws-node --namespace kube-system | grep Image | cut -d "/" -f 2
 
-- Ao obter a quantidade de pods recomendada, altere o valor da variavel `kubelet_extra_args` para `--max-pods=<QTD PODS>`
+    - > ./max-pods-calculator.sh --instance-type `<m5.large>` --cni-version `<1.9.x-eksbuild.y>` --cni-custom-networking-enabled
+
+  - Ao obter a quantidade de pods recomendada, altere o valor da variavel `kubelet_extra_args` para `--max-pods=<QTD PODS>`
 
  > terraform -chdir=lab/ng_shared/ apply
 

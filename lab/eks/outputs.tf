@@ -18,13 +18,13 @@ output "oidc_url" {
   value = module.eks.oidc_url
 }
 
-output "nodes_sg_id" {
-  value = module.eks.nodes_sg_id
-}
-
-output "cluster_sg_id" {
-  value = module.eks.cluster_sg_id
-}
+#output "nodes_sg_id" {
+#  value = module.eks.nodes_sg_id
+#}
+#
+#output "cluster_sg_id" {
+#  value = module.eks.cluster_sg_id
+#}
 
 output "sg_eks_cluster" {
   value = module.eks.sg_eks_cluster

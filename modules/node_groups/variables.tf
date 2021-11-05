@@ -29,10 +29,6 @@ variable "subnet_ids" {
   type = list
 }
 
-variable "eks_cluster_sg_id" {
-  type = string
-}
-
 ###############################
 # VARIAVEIS NÃO OBRIGATORIAS
 ###############################

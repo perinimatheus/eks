@@ -87,5 +87,3 @@
 - Altere o valor da variavel hostedzone para o id da `hostedzone` no route53 e o valor da variavel `domainFilters` para o dominio desejado.
 
  > terraform -chdir=lab/external-dns/ apply
-
-

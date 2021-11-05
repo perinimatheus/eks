@@ -19,51 +19,9 @@ resource "aws_subnet" "pods_subnets" {
     }
 }
 
-#resource "aws_subnet" "pods_subnet_1b" {
-#    count = var.secondary_cidr != ""  ? 1 : 0
-#
-#    vpc_id = aws_vpc.vpc.id
-#
-#    cidr_block            = var.pods_cidr[1]
-#    availability_zone     = "us-east-1b"
-#
-#    tags = {
-#        "Name" = "${var.cluster_name}-pods-subnet-1b",
-#        "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-#    }
-#}
-#
-#resource "aws_subnet" "pods_subnet_1c" {
-#    count = var.secondary_cidr != ""  ? 1 : 0
-#
-#    vpc_id = aws_vpc.vpc.id
-#
-#    cidr_block            = var.pods_cidr[1]
-#    availability_zone     = "us-east-1c"
-#
-#    tags = {
-#        "Name" = "${var.cluster_name}-pods-subnet-1c",
-#        "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-#    }
-#}
-
 resource "aws_route_table_association" "pods_rt" {
     count = var.secondary_cidr != ""  ? length(var.pods_cidr) : 0
 
     subnet_id = aws_subnet.pods_subnets[count.index].id
     route_table_id = aws_route_table.nat_rt[count.index].id
 }
-
-#resource "aws_route_table_association" "pods_1b" {
-#    count = var.secondary_cidr != ""  ? 1 : 0
-#
-#    subnet_id = aws_subnet.pods_subnet_1b[count.index].id
-#    route_table_id = aws_route_table.nat_az_b.id
-#}
-#
-#resource "aws_route_table_association" "pods_1c" {
-#    count = var.secondary_cidr != ""  ? 1 : 0
-#
-#    subnet_id = aws_subnet.pods_subnet_1c[count.index].id
-#    route_table_id = aws_route_table.nat_az_c.id
-#}

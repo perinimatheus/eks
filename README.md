@@ -11,10 +11,10 @@
 
 ## **<u>VPC</u>**
 
-<p>Criação de uma vpc, 3 public subnets, 3 private subnets e, caso necessite, coloque o valor da variavel enable_secondary_cidr como true para a criação do cidr secundario e das 3 pods subnets (cluster irá usar essas subnets para alocar os pods)</p>
+<p>Criação de uma vpc, 3 public subnets, 3 private subnets e, caso necessite, habilite o secondary_cidr para a criação do cidr secundario e das 3 pods subnets (cluster irá usar essas subnets para alocar os pods)</p>
 
  ```
-terraform -chdir=lab/vpc/ apply
+terraform -chdir=examples/vpc/ apply
  ```
 
 ## **<u>EKS</u>**
@@ -26,7 +26,7 @@ terraform -chdir=lab/vpc/ apply
       subnet_ids = data.terraform_remote_state.vpc.outputs.pods_subnets
 
  ```
-terraform -chdir=lab/eks/ apply
+terraform -chdir=examples/eks/ apply
  ```
 
 ## **<u>ADICIONANDO CONTEXTO</u>**
@@ -68,7 +68,7 @@ aws eks --region us-east-1 update-kubeconfig --name CLUSTER_NAME
 2. ### **REALIZE O APPLY**
 
      ```
-    terraform -chdir=lab/eniconfig/ apply
+    terraform -chdir=examples/eniconfig/ apply
      ```
 
 ## **<u>NODE-GROUP</u>**
@@ -92,7 +92,7 @@ aws eks --region us-east-1 update-kubeconfig --name CLUSTER_NAME
   - Ao obter a quantidade de pods recomendada, altere o valor da variavel `kubelet_extra_args` para `--max-pods=<QTD PODS>`
 
  ```
-terraform -chdir=lab/ng_shared/ apply
+terraform -chdir=examples/ng_shared/ apply
  ```
 
 ## **<u>CLUSTER AUTOSCALER</u>**
@@ -100,7 +100,7 @@ terraform -chdir=lab/ng_shared/ apply
 <p>Deploy do cluster autoscaler</p>
 
  ```
-terraform -chdir=lab/cluster-autoscaler/ apply
+terraform -chdir=examples/cluster-autoscaler/ apply
  ```
 
 ## **<u>NGINX INGRESS CONTROLLER</u>**
@@ -108,7 +108,7 @@ terraform -chdir=lab/cluster-autoscaler/ apply
 <p>Deploy do nginx ingress controller</p>
 
  ```
-terraform -chdir=lab/nginx-ingress/ apply
+terraform -chdir=examples/nginx-ingress/ apply
  ```
 
 ## **<u>EXTERNAL DNS</u>**
@@ -118,5 +118,5 @@ terraform -chdir=lab/nginx-ingress/ apply
 - Altere o valor da variavel hostedzone para o id da `hostedzone` no route53 e o valor da variavel `domainFilters` para o dominio desejado.
 
  ```
- terraform -chdir=lab/external-dns/ apply
+ terraform -chdir=examples/external-dns/ apply
  ```

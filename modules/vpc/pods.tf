@@ -1,16 +1,16 @@
 resource "aws_vpc_ipv4_cidr_block_association" "secondary_cidr" {
-  count = var.enable_secondary_cidr  ? 1 : 0
+  count = var.secondary_cidr != ""  ? 1 : 0
 
   vpc_id     = aws_vpc.vpc.id
-  cidr_block = "11.0.0.0/16"
+  cidr_block = var.secondary_cidr
 }
 
 resource "aws_subnet" "pods_subnet_1a" {
-    count = var.enable_secondary_cidr  ? 1 : 0
+    count = var.secondary_cidr != ""  ? 1 : 0
 
     vpc_id = aws_vpc.vpc.id
 
-    cidr_block            = "11.0.0.0/19"
+    cidr_block            = var.pods_cidr[0]
     availability_zone     = "us-east-1a"
 
     tags = {
@@ -20,11 +20,11 @@ resource "aws_subnet" "pods_subnet_1a" {
 }
 
 resource "aws_subnet" "pods_subnet_1b" {
-    count = var.enable_secondary_cidr  ? 1 : 0
+    count = var.secondary_cidr != ""  ? 1 : 0
 
     vpc_id = aws_vpc.vpc.id
 
-    cidr_block            = "11.0.64.0/19"
+    cidr_block            = var.pods_cidr[1]
     availability_zone     = "us-east-1b"
 
     tags = {
@@ -34,11 +34,11 @@ resource "aws_subnet" "pods_subnet_1b" {
 }
 
 resource "aws_subnet" "pods_subnet_1c" {
-    count = var.enable_secondary_cidr  ? 1 : 0
+    count = var.secondary_cidr != ""  ? 1 : 0
 
     vpc_id = aws_vpc.vpc.id
 
-    cidr_block            = "11.0.96.0/19"
+    cidr_block            = var.pods_cidr[1]
     availability_zone     = "us-east-1c"
 
     tags = {
@@ -48,21 +48,21 @@ resource "aws_subnet" "pods_subnet_1c" {
 }
 
 resource "aws_route_table_association" "pods_1a" {
-    count = var.enable_secondary_cidr  ? 1 : 0
+    count = var.secondary_cidr != ""  ? 1 : 0
 
     subnet_id = aws_subnet.pods_subnet_1a[count.index].id
     route_table_id = aws_route_table.nat_az_a.id
 }
 
 resource "aws_route_table_association" "pods_1b" {
-    count = var.enable_secondary_cidr  ? 1 : 0
+    count = var.secondary_cidr != ""  ? 1 : 0
 
     subnet_id = aws_subnet.pods_subnet_1b[count.index].id
     route_table_id = aws_route_table.nat_az_b.id
 }
 
 resource "aws_route_table_association" "pods_1c" {
-    count = var.enable_secondary_cidr  ? 1 : 0
+    count = var.secondary_cidr != ""  ? 1 : 0
 
     subnet_id = aws_subnet.pods_subnet_1c[count.index].id
     route_table_id = aws_route_table.nat_az_c.id

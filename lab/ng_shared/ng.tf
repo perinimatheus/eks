@@ -1,3 +1,7 @@
+locals {
+  node_group_name = "${data.terraform_remote_state.eks.outputs.cluster_name}-shared"
+}
+
 module "node_group" {
   source = "../../modules/node_groups"
 
@@ -9,7 +13,7 @@ module "node_group" {
   cluster_ca           = data.terraform_remote_state.eks.outputs.kubeconfig-certificate-authority-data
   eks_cluster_endpoint = data.terraform_remote_state.eks.outputs.endpoint
   capacity_type        = "SPOT"
-  security_groups      = [data.terraform_remote_state.eks.outputs.nodes_sg_id, aws_security_group.eks_shared_cluster_nodes_sg.id]
+  security_groups      = [data.terraform_remote_state.eks.outputs.sg_eks_cluster, aws_security_group.eks_shared_cluster_nodes_sg.id]
   instance_types       = ["t3.medium"]
 
   k8s_labels = tomap({
@@ -19,7 +23,7 @@ module "node_group" {
 
 resource "aws_security_group" "eks_shared_cluster_nodes_sg" {
   name   = "${local.node_group_name}-nodes-sg"
-  vpc_id = var.vpc_id
+  vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
 
   egress {
     from_port = 0

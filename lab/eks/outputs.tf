@@ -25,3 +25,7 @@ output "nodes_sg_id" {
 output "cluster_sg_id" {
   value = module.eks.cluster_sg_id
 }
+
+output "sg_eks_cluster" {
+  value = module.eks.sg_eks_cluster
+}

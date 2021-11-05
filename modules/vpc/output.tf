@@ -15,5 +15,5 @@ output "natgw_rt_ids" {
 }
 
 output "pods_subnets" {
-  value = [aws_subnet.pods_subnet_1a.0.id, aws_subnet.pods_subnet_1b.0.id, aws_subnet.pods_subnet_1c.0.id]
+  value = [aws_subnet.pods_subnet_1a.*.id, aws_subnet.pods_subnet_1b.*.id, aws_subnet.pods_subnet_1c.*.id]
 }

@@ -3,19 +3,19 @@ resource "aws_eks_cluster" "eks_cluster" {
   role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
-    subnet_ids = var.subnet_ids
+    subnet_ids              = var.subnet_ids
     endpoint_private_access = var.endpoint_private_access
     endpoint_public_access  = var.endpoint_public_access
-    public_access_cidrs = var.public_access_cidrs
+    public_access_cidrs     = var.public_access_cidrs
   }
 
   enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   tags = {
-    "Terraform" = "true",
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared",
+    "Terraform"                                     = "true",
+    "kubernetes.io/cluster/${var.cluster_name}"     = "shared",
     "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned",
-    "k8s.io/cluster-autoscaler/enabled" = true 
+    "k8s.io/cluster-autoscaler/enabled"             = true
   }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Cluster handling.

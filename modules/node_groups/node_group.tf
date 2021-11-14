@@ -28,11 +28,11 @@ resource "aws_eks_node_group" "eks_node_group" {
   }
 
   tags = {
-    "Terraform"                                                                         = "true"
-    "Node_group"                                                                        = "shared"
-    "environment"                                                                       = "lab"
+    "Terraform"                                     = "true"
+    "Node_group"                                    = "shared"
+    "environment"                                   = "lab"
     "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
-    "k8s.io/cluster-autoscaler/enabled"                                                 = true
+    "k8s.io/cluster-autoscaler/enabled"             = true
   }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.

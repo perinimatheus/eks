@@ -1,40 +1,15 @@
-terraform {
-  required_providers{
-      helm = {
-        source  = "hashicorp/helm"
-        version = "~> 2.3.0"
-      }
+resource "helm_release" "nginx_ingress" {
+  name      = "nginx-ingress"
+  chart     = "../../helm/ingress-nginx"
+  namespace = "kube-system"
+  timeout   = 390
 
-      aws = {
-        source  = "hashicorp/aws"
-        version = "~> 3.27"
-      }
-  }
+  values = [
+    "${file("values.yaml")}"
+  ]
 
-  backend "s3" {
-    bucket = "tfstate-perini"
-    key    = "lab-nginx-ingress"
-    region = "us-east-1"
-  }
-
-  required_version = ">= 0.14.11"
-}
-
-provider "helm" {
-  kubernetes {
-    config_path = "~/.kube/config"
-  }
-}
-
-provider "aws" {
-  region = "us-east-1"
-}
-
-data "terraform_remote_state" "eks" {
-  backend = "s3"
-  config = {
-    bucket = "tfstate-perini"
-    key    = "lab-eks"
-    region = "us-east-1"
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"
+    value = "arn:aws:acm:us-east-1:936619164022:certificate/fc51847c-34f5-4e3c-81e9-f18822b7b218"
   }
 }

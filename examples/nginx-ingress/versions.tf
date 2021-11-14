@@ -11,22 +11,5 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket = "tfstate-perini"
-    key    = "app-lab"
-    region = "us-east-1"
-  }
-
   required_version = ">= 0.14.11"
 }
-
-provider "helm" {
-  kubernetes {
-    config_path = "~/.kube/config"
-  }
-}
-
-provider "aws" {
-  region = "us-east-1"
-}
-

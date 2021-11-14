@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: app-lab-prom-rule
+  namespace: default
+  labels:
+    prometheus: k8s
+spec: 
+  groups:
+  - name: Queues_rules # Define the name of your rule
+    rules:
+    - record: messages_waiting_in_queue_name # The name of the metrics you want
+      expr: rabbitmq_queue_messages_ready{queue="test"} # Query to make to prometheus
+      labels:
+        namespace: default
+        service: app-lab # Name of the service you are going to configure your HPA with

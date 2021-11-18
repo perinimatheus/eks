@@ -11,7 +11,13 @@ image:
   tag: "0.0.5"
 
 strategy:
-  type: RollingUpdate
+  canary:
+    steps:
+    - setWeight: 10
+    - pause: {}
+    - setWeight: 50
+    - pause: {}
+    - setWeight: 100  
 
 imagePullSecrets: []
 nameOverride: ""
@@ -45,12 +51,12 @@ service:
 
 ingress:
   enabled: true
-  className: ""
+  className: "nginx"
   annotations:
-    kubernetes.io/ingress.class: nginx
+    #kubernetes.io/ingress.class: nginx
     #kubernetes.io/tls-acme: "true"
   hosts:
-    - host: app-lab.perini.net.br
+    - host: app-lab.perini-lab.net
       paths:
         - path: /
           pathType: ImplementationSpecific
@@ -76,10 +82,11 @@ resources:
     memory: 128Mi
 
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 1
   maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
+  rabbitmq: true
+  # targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}

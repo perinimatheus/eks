@@ -1,29 +1,10 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.27"
-    }
-  }
+module "eks" {
+  source = "../../modules/eks"
 
-  backend "s3" {
-    bucket = "tfstate-perini"
-    key    = "lab-eks"
-    region = "us-east-1"
-  }
+  cluster_name = "lab"
 
-  required_version = ">= 0.14.9"
-}
+  # IF YOU WANT TO USE SECONDARY CIDR CHANGE TO PODS_SUBNETS
+  subnet_ids = data.terraform_remote_state.vpc.outputs.private_subnets
 
-provider "aws" {
-  region = "us-east-1"
-}
-
-data "terraform_remote_state" "vpc" {
-  backend = "s3"
-  config = {
-    bucket = "tfstate-perini"
-    key    = "lab-vpc"
-    region = "us-east-1"
-  }
+  vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
 }

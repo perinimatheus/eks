@@ -6,7 +6,7 @@ variable "cluster_name" {
 }
 
 variable "k8s_labels" {
-  type = map
+  type = map(any)
 }
 
 variable "ng_name" {
@@ -26,7 +26,7 @@ variable "cluster_ca" {
 }
 
 variable "subnet_ids" {
-  type = list
+  type = list(any)
 }
 
 ###############################
@@ -52,7 +52,7 @@ variable "instance_types" {
   default = [
     "t3.medium"
   ]
-  type = list
+  type = list(any)
 }
 
 variable "capacity_type" {
@@ -61,17 +61,17 @@ variable "capacity_type" {
 }
 
 variable "image_id" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "security_groups" {
-  type = list
+  type    = list(any)
   default = []
 }
 
 variable "kubelet_extra_args" {
-  type = string
+  type    = string
   default = ""
 }
 
@@ -116,6 +116,6 @@ variable "volume_type" {
 }
 
 variable "volume_device_name" {
-  type  = string
-  default  = "/dev/xvda"
+  type    = string
+  default = "/dev/xvda"
 }

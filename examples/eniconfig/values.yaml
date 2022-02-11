@@ -1,13 +1,18 @@
 azs:
-  - name: us-east-1a
+  a:
+    name: us-east-1a
     sgs:
       - sg-0a811ef6d2b12f023
     subnet: subnet-0c5c407ec83926f01
-  - name: us-east-1b
+
+  b:
+    name: us-east-1b
     sgs:
       - sg-0a811ef6d2b12f023
     subnet: subnet-0d0b0698fc27c0125
-  - name: us-east-1c
+
+  c:
+    name: us-east-1c
     sgs:
       - sg-0a811ef6d2b12f023
     subnet: subnet-02dcb99324890ff81
